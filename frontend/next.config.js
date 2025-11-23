@@ -25,7 +25,7 @@ try {
 /** @type {import('next').NextConfig} */
 module.exports = {
     reactStrictMode: true,
-    trailingSlash: false,
+    trailingSlash: true,
     basePath: '/stock_app',
     assetPrefix: '/stock_app',
     async rewrites() {
