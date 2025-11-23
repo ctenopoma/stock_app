@@ -10,10 +10,10 @@ services:
       - DJANGO_SECRET_KEY=dev-secret-key-do-not-use-in-prod
       - DEBUG=True
       - ALLOWED_HOSTS=*
-      - DATA_DIR=/app/data
+      # DATA_DIRを設定しないことで、ローカルのdb.sqlite3を使用
     volumes:
       - ./backend/src:/app
-      - backend_data:/app/data
+      # backend_data volume を削除してローカルファイルを直接使用
     networks:
       - stock_app_network
     restart: unless-stopped
@@ -43,5 +43,4 @@ networks:
   stock_app_network:
     driver: bridge
 
-volumes:
-  backend_data:
+# backend_data volume は不要（ローカルファイルを直接使用）
