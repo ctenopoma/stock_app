@@ -1,6 +1,7 @@
 from django.contrib.auth import login, logout
+from django.middleware.csrf import get_token
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -15,15 +16,40 @@ class LoginView(APIView):
     permission_classes = [AllowAny]
 
     @method_decorator(csrf_exempt)
+    @method_decorator(ensure_csrf_cookie)
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
         login(request, user)
+        
+        # CSRFトークンを取得してクッキーに設定
+        csrf_token = get_token(request)
+        
         print(
-            f"[DEBUG] LoginView: user={user.username}, session_key={request.session.session_key}"
+            f"[DEBUG] LoginView: user={user.username}, session_key={request.session.session_key}, csrf_token={csrf_token[:10]}..."
         )
-        return Response({"id": user.id, "username": user.username, "email": user.email})
+        
+        response = Response({"id": user.id, "username": user.username, "email": user.email})
+        # CSRFクッキーを確実に設定
+        response.set_cookie(
+            'csrftoken',
+            csrf_token,
+            max_age=31449600,  # 1年
+            httponly=False,
+            samesite='Lax',
+            secure=False  # 開発環境用（HTTPの場合）
+        )
+        # セッションIDも明示的に設定（念のため）
+        response.set_cookie(
+            'sessionid',
+            request.session.session_key,
+            max_age=86400,  # 24時間
+            httponly=True,
+            samesite='Lax',
+            secure=False  # 開発環境用（HTTPの場合）
+        )
+        return response
 
 
 class LogoutView(APIView):
@@ -52,3 +78,14 @@ class MeView(APIView):
 
         user = request.user
         return Response({"id": user.id, "username": user.username, "email": user.email})
+
+
+class CSRFTokenView(APIView):
+    """CSRFトークンを取得するエンドポイント"""
+    
+    permission_classes = [AllowAny]
+    
+    @method_decorator(ensure_csrf_cookie)
+    def get(self, request):
+        csrf_token = get_token(request)
+        return Response({"csrfToken": csrf_token})

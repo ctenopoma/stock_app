@@ -211,7 +211,7 @@ async function apiRequest<T = unknown>(
     endpoint: string,
     options: RequestOptions = {}
 ): Promise<T> {
-    const url = `${API_BASE_URL}${endpoint}`;
+    const url = `${API_BASE_URL}/${endpoint}`;
 
     const headers: Record<string, string> = {
         "Content-Type": "application/json",
@@ -299,10 +299,25 @@ async function apiRequest<T = unknown>(
 
 export const authAPI = {
     /**
+     * GET /auth/csrf
+     * Get CSRF token (sets csrftoken cookie)
+     */
+    async getCsrfToken(): Promise<{ csrfToken: string }> {
+        return apiRequest<{ csrfToken: string }>("auth/csrf/");
+    },
+
+    /**
      * POST /auth/login
      * Login with username and password
      */
     async login(username: string, password: string): Promise<User> {
+        // まずCSRFトークンを取得
+        try {
+            await this.getCsrfToken();
+        } catch (error) {
+            console.warn('[API] Failed to get CSRF token before login:', error);
+        }
+
         return apiRequest<User>("auth/login/", {
             method: "POST",
             body: JSON.stringify({ username, password }),

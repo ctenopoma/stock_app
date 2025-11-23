@@ -10,7 +10,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-secret-key-do-not-use-in-p
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "192.168.50.51", "myapp.local", "*"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -83,7 +83,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
+        "config.authentication.CsrfExemptSessionAuthentication",
         "rest_framework.authentication.BasicAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
@@ -92,6 +92,23 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
 }
+
+# CSRF & Session Cookie設定（開発環境用）
+# 同一ホスト内の異なるポート間通信のため、SameSite=Laxで十分
+# 本番環境では適切なCSRF保護とセキュリティ設定を実装してください
+CSRF_COOKIE_SECURE = False  # HTTPの場合はFalse（開発環境）
+CSRF_COOKIE_HTTPONLY = False  # JavaScriptからアクセス可能にする
+CSRF_COOKIE_SAMESITE = 'Lax'  # 同一ホスト内の通信用
+CSRF_COOKIE_NAME = 'csrftoken'
+
+SESSION_COOKIE_SECURE = False  # HTTPの場合はFalse（開発環境）
+SESSION_COOKIE_HTTPONLY = True  # XSS攻撃対策
+SESSION_COOKIE_SAMESITE = 'Lax'  # 同一ホスト内の通信用
+SESSION_COOKIE_NAME = 'sessionid'
+SESSION_COOKIE_DOMAIN = None  # Noneにして自動設定させる
+
+# セッションの有効期限
+SESSION_COOKIE_AGE = 86400  # 24時間
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Portfolio Analysis API",
@@ -110,6 +127,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3001",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:3001",
+    "http://192.168.50.51:3001",
+    "http://myapp.local:3001",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -119,12 +138,9 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3001",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:3001",
+    "http://192.168.50.51:3001",
+    "http://myapp.local:3001",
 ]
-
-# Session and Cookie settings
-SESSION_COOKIE_SAMESITE = "Lax"  # Lax allows cookies with top-level navigation
-SESSION_COOKIE_SECURE = False  # Must be False for HTTP (dev)
-SESSION_COOKIE_HTTPONLY = True  # Prevent XSS attacks
-
-CSRF_COOKIE_SAMESITE = "Lax"  # Lax allows CSRF tokens to be sent
 CSRF_COOKIE_SECURE = False  # Must be False for HTTP (dev)
+CSRF_USE_SESSIONS = False  # Store CSRF token in cookie, not session
+CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to read CSRF cookie

@@ -27,17 +27,24 @@ module.exports = {
     reactStrictMode: true,
     trailingSlash: false,
     async rewrites() {
+        // バックエンドのホスト（環境変数から取得、デフォルトは127.0.0.1）
+        const backendHost = process.env.BACKEND_HOST || '127.0.0.1';
+        const backendPort = process.env.BACKEND_PORT || '8000';
+        const backendUrl = `http://${backendHost}:${backendPort}`;
+
+        console.log(`[Next.js] API proxy configured: ${backendUrl}/api/v1`);
+
         return {
             beforeFiles: [
                 // Match paths with trailing slash
                 {
                     source: '/api/v1/:path*/',
-                    destination: 'http://127.0.0.1:8000/api/v1/:path*/',
+                    destination: `${backendUrl}/api/v1/:path*/`,
                 },
                 // Match paths without trailing slash and add it
                 {
                     source: '/api/v1/:path*',
-                    destination: 'http://127.0.0.1:8000/api/v1/:path*/',
+                    destination: `${backendUrl}/api/v1/:path*/`,
                 },
             ],
         };

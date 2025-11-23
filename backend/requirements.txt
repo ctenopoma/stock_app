@@ -1,6 +1,7 @@
 Django>=4.2,<5.0
 djangorestframework>=3.14
 drf-spectacular>=0.26
+django-cors-headers>=4.0
 pytest>=7.0
 pytest-django>=4.5
 mypy>=1.2

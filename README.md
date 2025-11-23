@@ -3,7 +3,7 @@
 A full-stack application for managing investment holdings, tracking recurring investment plans, and projecting future portfolio growth using compound interest calculations.
 
 **Tech Stack**:
-- **Backend**: Django 4.2+ with Django REST Framework 3.14+
+- **Backend**: Django 4.2+ with Django REST Framework 3.12+
 - **Frontend**: Next.js 14 (React 18, TypeScript 5)
 - **Database**: SQLite (development), PostgreSQL (production-ready)
 - **Testing**: pytest (backend), Jest/Vitest (frontend)

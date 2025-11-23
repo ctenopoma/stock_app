@@ -3,8 +3,8 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "node -r ./node_fetch_polyfill.js ./node_modules/next/dist/bin/next dev -H 127.0.0.1 -p 3001",
-        "dev:clean": "rimraf .next && node -r ./node_fetch_polyfill.js ./node_modules/next/dist/bin/next dev -H 127.0.0.1 -p 3001",
+        "dev": "node -r ./node_fetch_polyfill.js ./node_modules/next/dist/bin/next dev -H 0.0.0.0 -p 3001",
+        "dev:clean": "rimraf .next && node -r ./node_fetch_polyfill.js ./node_modules/next/dist/bin/next dev -H 0.0.0.0 -p 3001",
         "build": "node -r ./node_fetch_polyfill.js ./node_modules/next/dist/bin/next build",
         "start": "next start",
         "lint": "eslint . --ext .ts,.tsx",
