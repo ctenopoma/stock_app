@@ -136,11 +136,15 @@ install_backend_requirements() {
 run_backend_migrations() {
   echo "[backend] Applying migrations"
   (cd "$BACKEND_DIR/src" && python manage.py migrate --noinput)
+  echo "[backend] Collecting static files"
+  (cd "$BACKEND_DIR/src" && python manage.py collectstatic --noinput)
 }
 
 start_backend() {
   echo "[backend] Starting Django server"
   cd "$BACKEND_DIR/src"
+  # Set FORCE_SCRIPT_NAME for reverse proxy support
+  export FORCE_SCRIPT_NAME="/stock_app"
   nohup python manage.py runserver "$HOST:$BACKEND_PORT" >"$LOG_DIR/backend.log" 2>&1 </dev/null &
   BACKEND_PID=$!
   echo $BACKEND_PID >"$LOG_DIR/backend.pid"

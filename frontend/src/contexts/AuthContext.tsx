@@ -39,11 +39,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const login = async (username: string, password: string) => {
-        const userData = await api.auth.login(username, password);
-        console.log('[AuthContext] Login successful:', userData);
-        console.log('[AuthContext] Cookies after login:', document.cookie);
-        setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
+        try {
+            const userData = await api.auth.login(username, password);
+            console.log('[AuthContext] Login successful:', userData);
+            console.log('[AuthContext] Cookies after login:', document.cookie);
+            setUser(userData);
+            localStorage.setItem('user', JSON.stringify(userData));
+        } catch (error: any) {
+            // エラーメッセージを日本語に変換
+            if (error.message?.includes('Unable to log in with provided credentials')) {
+                throw new Error('ユーザー名またはパスワードが間違っています');
+            } else if (error.message?.includes('User account is disabled')) {
+                throw new Error('このアカウントは無効化されています');
+            } else if (error.status === 401 || error.status === 403) {
+                throw new Error('認証に失敗しました');
+            }
+            throw error;
+        }
     };
 
     const logout = async () => {

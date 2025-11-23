@@ -18,7 +18,12 @@ class LoginView(APIView):
     @method_decorator(csrf_exempt)
     @method_decorator(ensure_csrf_cookie)
     def post(self, request):
+        print(f"[DEBUG] LoginView.post - request.data: {request.data}")
+        print(f"[DEBUG] LoginView.post - Content-Type: {request.content_type}")
         serializer = LoginSerializer(data=request.data)
+        print(f"[DEBUG] LoginView.post - serializer.is_valid(): checking...")
+        if not serializer.is_valid():
+            print(f"[DEBUG] LoginView.post - validation errors: {serializer.errors}")
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
         login(request, user)

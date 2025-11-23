@@ -16,7 +16,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # アプリケーションコードをコピー
 COPY backend/src /app
 
-# マイグレーション、初期ユーザー作成、サーバー起動
+# マイグレーション、静的ファイル収集、初期ユーザー作成、サーバー起動
 CMD python manage.py migrate --noinput && \
+    python manage.py collectstatic --noinput && \
     python create_initial_users.py && \
     python manage.py runserver 0.0.0.0:8000

@@ -10,6 +10,7 @@ services:
       - DJANGO_SECRET_KEY=dev-secret-key-do-not-use-in-prod
       - DEBUG=True
       - ALLOWED_HOSTS=*
+      - FORCE_SCRIPT_NAME=/stock_app
       # DATA_DIRを設定しないことで、ローカルのdb.sqlite3を使用
     volumes:
       - ./backend/src:/app
@@ -26,7 +27,7 @@ services:
     ports:
       - "3001:3001"
     environment:
-      - NEXT_PUBLIC_API_URL=/api/v1
+      - NEXT_PUBLIC_API_URL=/stock_app/api/v1
       - BACKEND_HOST=backend
       - BACKEND_PORT=8000
     volumes:

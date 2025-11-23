@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
@@ -6,3 +8,7 @@ urlpatterns = [
     # API entrypoint - actual routes should be registered in backend/src/api/urls.py
     path("api/v1/", include("api.urls")),
 ]
+
+# Serve static files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

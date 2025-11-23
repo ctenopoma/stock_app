@@ -10,7 +10,11 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-secret-key-do-not-use-in-p
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "192.168.50.51", "myapp.local", "*"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "192.168.50.51", "myapp.home", "*"]
+
+# Reverse proxy support - Django will handle /stock_app prefix
+FORCE_SCRIPT_NAME = os.environ.get("FORCE_SCRIPT_NAME", None)
+USE_X_FORWARDED_HOST = True
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -75,7 +79,14 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = "/static/"
+# Static files URL - works with or without FORCE_SCRIPT_NAME
+if FORCE_SCRIPT_NAME:
+    STATIC_URL = f"{FORCE_SCRIPT_NAME}/static/"
+else:
+    STATIC_URL = "/static/"
+
+# Static files directory for collectstatic
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -103,12 +114,14 @@ CSRF_COOKIE_SECURE = False  # HTTPの場合はFalse（開発環境）
 CSRF_COOKIE_HTTPONLY = False  # JavaScriptからアクセス可能にする
 CSRF_COOKIE_SAMESITE = 'Lax'  # 同一ホスト内の通信用
 CSRF_COOKIE_NAME = 'csrftoken'
+CSRF_COOKIE_PATH = '/'  # 全てのパスでCookieを送信
 
 SESSION_COOKIE_SECURE = False  # HTTPの場合はFalse（開発環境）
 SESSION_COOKIE_HTTPONLY = True  # XSS攻撃対策
 SESSION_COOKIE_SAMESITE = 'Lax'  # 同一ホスト内の通信用
 SESSION_COOKIE_NAME = 'sessionid'
 SESSION_COOKIE_DOMAIN = None  # Noneにして自動設定させる
+SESSION_COOKIE_PATH = '/'  # 全てのパスでCookieを送信
 
 # セッションの有効期限
 SESSION_COOKIE_AGE = 86400  # 24時間
@@ -131,7 +144,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://127.0.0.1:3001",
     "http://192.168.50.51:3001",
-    "http://myapp.local:3001",
+    "http://myapp.home:3001",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -142,8 +155,28 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://127.0.0.1:3001",
     "http://192.168.50.51:3001",
-    "http://myapp.local:3001",
+    "http://192.168.50.51",
+    "http://myapp.home:3001",
+    "http://myapp.home",
 ]
-CSRF_COOKIE_SECURE = False  # Must be False for HTTP (dev)
 CSRF_USE_SESSIONS = False  # Store CSRF token in cookie, not session
-CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to read CSRF cookie
+
+# CSRF failure logging
+CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.security.csrf': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+        },
+    },
+}

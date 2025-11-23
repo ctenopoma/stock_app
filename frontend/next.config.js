@@ -26,6 +26,8 @@ try {
 module.exports = {
     reactStrictMode: true,
     trailingSlash: false,
+    basePath: '/stock_app',
+    assetPrefix: '/stock_app',
     async rewrites() {
         // バックエンドのホスト（環境変数から取得、デフォルトは127.0.0.1）
         const backendHost = process.env.BACKEND_HOST || '127.0.0.1';

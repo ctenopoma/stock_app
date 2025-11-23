@@ -12,15 +12,19 @@ export default function LoginPage() {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        console.log('[Login] Form submitted', { username, password: '***' });
         setError('');
         setIsLoading(true);
 
         try {
+            console.log('[Login] Calling login...');
             await login(username, password);
+            console.log('[Login] Login successful');
             // ログイン成功後、元のページまたはホームにリダイレクト
             const returnUrl = (router.query.returnUrl as string) || '/input';
             router.push(returnUrl);
         } catch (err: any) {
+            console.error('[Login] Login failed:', err);
             setError(err.message || 'ログインに失敗しました');
         } finally {
             setIsLoading(false);
@@ -34,7 +38,7 @@ export default function LoginPage() {
                 <div className="text-center mb-8">
                     <div className="flex justify-center mb-4">
                         <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-4 rounded-2xl shadow-lg">
-                            <img src="/logo.png" alt="Logo" className="w-16 h-16" />
+                            <img src="/stock_app/logo.png" alt="Logo" className="w-16 h-16" />
                         </div>
                     </div>
                     <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
@@ -130,8 +134,8 @@ export default function LoginPage() {
                             💡 デモアカウント
                         </p>
                         <div className="text-xs text-blue-600 dark:text-blue-400 space-y-1">
-                            <p>ユーザー名: <code className="bg-white dark:bg-gray-700 px-2 py-0.5 rounded">testuser</code></p>
-                            <p>パスワード: <code className="bg-white dark:bg-gray-700 px-2 py-0.5 rounded">testpass123</code></p>
+                            <p>ユーザー名: <code className="bg-white dark:bg-gray-700 px-2 py-0.5 rounded">admin</code></p>
+                            <p>パスワード: <code className="bg-white dark:bg-gray-700 px-2 py-0.5 rounded">admin123</code></p>
                         </div>
                     </div>
                 </div>
