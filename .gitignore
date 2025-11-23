@@ -33,6 +33,11 @@ ENV/
 env.bak/
 venv.bak/
 
+# Database
+*.sqlite3
+*.db
+db.sqlite3
+
 # Editor
 .DS_Store
 Thumbs.db
@@ -42,3 +47,8 @@ Thumbs.db
 # OS
 *.log
 *.tmp
+
+# Runtime files
+.pids
+logs/*.pid
+logs/*.log
