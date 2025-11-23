@@ -1,0 +1,18 @@
+# Frontend Dockerfile
+FROM node:18-slim
+
+WORKDIR /app
+
+# 依存関係をコピーしてインストール
+COPY frontend/package*.json ./
+RUN npm ci
+
+# アプリケーションコードをコピー
+COPY frontend/ .
+
+# 環境変数を設定（ビルド時）
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# 開発サーバー起動
+EXPOSE 3001
+CMD ["npm", "run", "dev"]

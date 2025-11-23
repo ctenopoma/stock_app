@@ -1,0 +1,47 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: stock_app_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SECRET_KEY=dev-secret-key-do-not-use-in-prod
+      - DEBUG=True
+      - ALLOWED_HOSTS=*
+      - DATA_DIR=/app/data
+    volumes:
+      - ./backend/src:/app
+      - backend_data:/app/data
+    networks:
+      - stock_app_network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: stock_app_frontend
+    ports:
+      - "3001:3001"
+    environment:
+      - NEXT_PUBLIC_API_URL=/api/v1
+      - BACKEND_HOST=backend
+      - BACKEND_PORT=8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - stock_app_network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+networks:
+  stock_app_network:
+    driver: bridge
+
+volumes:
+  backend_data:

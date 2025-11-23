@@ -58,10 +58,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+# Database configuration
+# Use DATA_DIR for persistent storage in Docker
+DATA_DIR = os.environ.get("DATA_DIR", str(BASE_DIR))
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": os.path.join(DATA_DIR, "db.sqlite3"),
     }
 }
 
