@@ -1,0 +1,137 @@
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 16px;
+    }
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.breadcrumb {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.content {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.formSection,
+.resultSection,
+.chartSection,
+.tableSection {
+    background: #fafafa;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.summaryGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+@media (max-width: 1024px) {
+    .summaryGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .summaryGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.summaryCard {
+    background: #fff;
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.amount {
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.highlight {
+    color: #0ea5e9;
+}
+
+.dataTable {
+    width: 100%;
+    border-collapse: collapse;
+    overflow-x: auto;
+}
+
+.dataTable th,
+.dataTable td {
+    border: 1px solid #e5e7eb;
+    padding: 8px;
+    text-align: left;
+}
+
+@media (max-width: 768px) {
+
+    .dataTable th,
+    .dataTable td {
+        padding: 6px 4px;
+        font-size: 0.875rem;
+    }
+}
+
+.tableSection {
+    overflow-x: auto;
+}
+
+.tableHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.downloadButton {
+    background: #10b981;
+    color: white;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+.downloadButton:hover {
+    background: #059669;
+}
+
+.downloadButton:focus {
+    outline: 2px solid #10b981;
+    outline-offset: 2px;
+}
+
+.error {
+    color: #ef4444;
+    padding: 12px;
+    background: #fee2e2;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}

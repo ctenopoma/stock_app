@@ -1,0 +1,833 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Portfolio Analysis & Asset Projection API",
+        "version": "1.0.0",
+        "description": "API for managing investment holdings, recurring plans, and portfolio projections"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api/v1",
+            "description": "Local development server"
+        }
+    ],
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "summary": "User login",
+                "tags": [
+                    "Authentication"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful; session cookie set",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "username": {
+                                            "type": "string"
+                                        },
+                                        "email": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "summary": "User logout",
+                "tags": [
+                    "Authentication"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Logout successful"
+                    },
+                    "401": {
+                        "description": "Not authenticated"
+                    }
+                }
+            }
+        },
+        "/holdings": {
+            "get": {
+                "summary": "List all investment holdings for current user",
+                "tags": [
+                    "Holdings"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "page_size",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 50
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of holdings",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer"
+                                        },
+                                        "next": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "previous": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "results": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/InvestmentHolding"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not authenticated"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new investment holding",
+                "tags": [
+                    "Holdings"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InvestmentHoldingInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Holding created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InvestmentHolding"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "401": {
+                        "description": "Not authenticated"
+                    }
+                }
+            }
+        },
+        "/holdings/{id}": {
+            "get": {
+                "summary": "Get a specific holding",
+                "tags": [
+                    "Holdings"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Holding details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InvestmentHolding"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Holding not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a holding",
+                "tags": [
+                    "Holdings"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InvestmentHoldingInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Holding updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InvestmentHolding"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "404": {
+                        "description": "Holding not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a holding",
+                "tags": [
+                    "Holdings"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Holding deleted"
+                    },
+                    "404": {
+                        "description": "Holding not found"
+                    }
+                }
+            }
+        },
+        "/portfolio/summary": {
+            "get": {
+                "summary": "Get current portfolio summary and composition",
+                "tags": [
+                    "Portfolio"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Portfolio summary",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PortfolioSummary"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not authenticated"
+                    }
+                }
+            }
+        },
+        "/recurring-plans": {
+            "get": {
+                "summary": "List all recurring investment plans",
+                "tags": [
+                    "RecurringPlans"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of recurring plans",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "results": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RecurringInvestmentPlan"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not authenticated"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new recurring investment plan",
+                "tags": [
+                    "RecurringPlans"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RecurringInvestmentPlanInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Plan created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecurringInvestmentPlan"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "401": {
+                        "description": "Not authenticated"
+                    }
+                }
+            }
+        },
+        "/recurring-plans/{id}": {
+            "put": {
+                "summary": "Update a recurring plan",
+                "tags": [
+                    "RecurringPlans"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RecurringInvestmentPlanInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Plan updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecurringInvestmentPlan"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "404": {
+                        "description": "Plan not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a recurring plan",
+                "tags": [
+                    "RecurringPlans"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Plan deleted"
+                    },
+                    "404": {
+                        "description": "Plan not found"
+                    }
+                }
+            }
+        },
+        "/projections": {
+            "post": {
+                "summary": "Calculate future portfolio projection",
+                "tags": [
+                    "Projections"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProjectionInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Projection calculated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Projection"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "401": {
+                        "description": "Not authenticated"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "InvestmentHolding": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "account_type": {
+                        "type": "string",
+                        "enum": [
+                            "NISA",
+                            "GENERAL"
+                        ]
+                    },
+                    "asset_class": {
+                        "type": "string",
+                        "enum": [
+                            "INDIVIDUAL_STOCK",
+                            "MUTUAL_FUND",
+                            "CRYPTOCURRENCY",
+                            "REIT",
+                            "GOVERNMENT_BOND",
+                            "OTHER"
+                        ]
+                    },
+                    "asset_region": {
+                        "type": "string",
+                        "enum": [
+                            "DOMESTIC_STOCKS",
+                            "INTERNATIONAL_STOCKS",
+                            "DOMESTIC_BONDS",
+                            "INTERNATIONAL_BONDS",
+                            "DOMESTIC_REITS",
+                            "INTERNATIONAL_REITS",
+                            "CRYPTOCURRENCY",
+                            "OTHER"
+                        ]
+                    },
+                    "asset_identifier": {
+                        "type": "string"
+                    },
+                    "asset_name": {
+                        "type": "string"
+                    },
+                    "current_amount_jpy": {
+                        "type": "number",
+                        "format": "decimal"
+                    },
+                    "purchase_date": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "InvestmentHoldingInput": {
+                "type": "object",
+                "properties": {
+                    "account_type": {
+                        "type": "string",
+                        "enum": [
+                            "NISA",
+                            "GENERAL"
+                        ]
+                    },
+                    "asset_class": {
+                        "type": "string"
+                    },
+                    "asset_region": {
+                        "type": "string"
+                    },
+                    "asset_identifier": {
+                        "type": "string"
+                    },
+                    "asset_name": {
+                        "type": "string"
+                    },
+                    "current_amount_jpy": {
+                        "type": "number"
+                    },
+                    "purchase_date": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "account_type",
+                    "asset_class",
+                    "asset_region",
+                    "asset_identifier",
+                    "asset_name",
+                    "current_amount_jpy"
+                ]
+            },
+            "RecurringInvestmentPlan": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "target_account_type": {
+                        "type": "string",
+                        "enum": [
+                            "NISA",
+                            "GENERAL"
+                        ]
+                    },
+                    "target_asset_class": {
+                        "type": "string"
+                    },
+                    "target_asset_region": {
+                        "type": "string"
+                    },
+                    "frequency": {
+                        "type": "string",
+                        "enum": [
+                            "DAILY",
+                            "MONTHLY",
+                            "BONUS_MONTH"
+                        ]
+                    },
+                    "amount_jpy": {
+                        "type": "number",
+                        "format": "decimal"
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "bonus_months": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "RecurringInvestmentPlanInput": {
+                "type": "object",
+                "properties": {
+                    "target_account_type": {
+                        "type": "string",
+                        "enum": [
+                            "NISA",
+                            "GENERAL"
+                        ]
+                    },
+                    "target_asset_class": {
+                        "type": "string"
+                    },
+                    "target_asset_region": {
+                        "type": "string"
+                    },
+                    "frequency": {
+                        "type": "string",
+                        "enum": [
+                            "DAILY",
+                            "MONTHLY",
+                            "BONUS_MONTH"
+                        ]
+                    },
+                    "amount_jpy": {
+                        "type": "number"
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "bonus_months": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "target_account_type",
+                    "target_asset_class",
+                    "target_asset_region",
+                    "frequency",
+                    "amount_jpy",
+                    "start_date"
+                ]
+            },
+            "PortfolioSummary": {
+                "type": "object",
+                "properties": {
+                    "total_value_jpy": {
+                        "type": "number",
+                        "format": "decimal"
+                    },
+                    "holdings_count": {
+                        "type": "integer"
+                    },
+                    "composition_by_region": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object",
+                            "properties": {
+                                "amount": {
+                                    "type": "number",
+                                    "format": "decimal"
+                                },
+                                "percentage": {
+                                    "type": "number",
+                                    "format": "float"
+                                }
+                            }
+                        }
+                    },
+                    "composition_by_account_type": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object",
+                            "properties": {
+                                "amount": {
+                                    "type": "number",
+                                    "format": "decimal"
+                                },
+                                "percentage": {
+                                    "type": "number",
+                                    "format": "float"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "ProjectionInput": {
+                "type": "object",
+                "properties": {
+                    "projection_years": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 50
+                    },
+                    "annual_return_rate": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Annual return as percentage, e.g., 4.0 for 4%"
+                    }
+                },
+                "required": [
+                    "projection_years",
+                    "annual_return_rate"
+                ]
+            },
+            "Projection": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "projection_years": {
+                        "type": "integer"
+                    },
+                    "annual_return_rate": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "starting_balance_jpy": {
+                        "type": "number",
+                        "format": "decimal"
+                    },
+                    "total_accumulated_contributions_jpy": {
+                        "type": "number",
+                        "format": "decimal"
+                    },
+                    "total_interest_gains_jpy": {
+                        "type": "number",
+                        "format": "decimal"
+                    },
+                    "projected_total_value_jpy": {
+                        "type": "number",
+                        "format": "decimal"
+                    },
+                    "projected_composition_by_region": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object",
+                            "properties": {
+                                "amount": {
+                                    "type": "number",
+                                    "format": "decimal"
+                                },
+                                "percentage": {
+                                    "type": "number",
+                                    "format": "float"
+                                }
+                            }
+                        }
+                    },
+                    "year_by_year_breakdown": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "year": {
+                                    "type": "integer"
+                                },
+                                "balance": {
+                                    "type": "number",
+                                    "format": "decimal"
+                                }
+                            }
+                        },
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            }
+        }
+    }
+}

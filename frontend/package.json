@@ -1,0 +1,43 @@
+{
+    "name": "stock-app-frontend",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "node -r ./node_fetch_polyfill.js ./node_modules/next/dist/bin/next dev -H 127.0.0.1 -p 3001",
+        "dev:clean": "rimraf .next && node -r ./node_fetch_polyfill.js ./node_modules/next/dist/bin/next dev -H 127.0.0.1 -p 3001",
+        "build": "node -r ./node_fetch_polyfill.js ./node_modules/next/dist/bin/next build",
+        "start": "next start",
+        "lint": "eslint . --ext .ts,.tsx",
+        "test": "jest --passWithNoTests"
+    },
+    "dependencies": {
+        "next": "14.0.0",
+        "node-fetch": "^2.6.7",
+        "react": "18.2.0",
+        "react-dom": "18.2.0",
+        "recharts": "2.6.0",
+        "web-streams-polyfill": "^3.2.1"
+    },
+    "devDependencies": {
+        "@testing-library/jest-dom": "^6.9.1",
+        "@testing-library/react": "^16.3.0",
+        "@testing-library/user-event": "^14.6.1",
+        "@types/jest": "^30.0.0",
+        "@types/node": "^24.10.1",
+        "@types/react": "^19.2.4",
+        "@types/react-dom": "^19.2.3",
+        "@typescript-eslint/eslint-plugin": "5.0.0",
+        "@typescript-eslint/parser": "5.0.0",
+        "autoprefixer": "^10.4.17",
+        "eslint": "8.0.0",
+        "eslint-plugin-jsx-a11y": "^6.7.1",
+        "eslint-plugin-react": "^7.32.2",
+        "jest": "^29.7.0",
+        "jest-environment-jsdom": "^29.7.0",
+        "postcss": "^8.4.33",
+        "prettier": "2.8.0",
+        "ts-jest": "^29.2.5",
+        "tailwindcss": "^3.4.1",
+        "typescript": "5.1.6"
+    }
+}

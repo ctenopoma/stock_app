@@ -1,0 +1,21 @@
+# Core runtime
+Django>=4.2,<5.0
+djangorestframework>=3.14
+drf-spectacular>=0.26
+jpholiday
+
+# Testing & dev
+pytest>=7.0
+pytest-django>=4.5
+coverage>=6.0
+
+# Type checking & linters
+mypy>=1.2
+ruff>=0.0.281
+black>=23.0
+isort>=5.0
+
+# Dev helpers
+pre-commit>=2.20
+ipython
+psycopg2-binary  # optional for local Postgres testing

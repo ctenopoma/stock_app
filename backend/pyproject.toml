@@ -1,0 +1,16 @@
+[tool.black]
+line-length = 88
+
+[tool.ruff]
+line-length = 88
+extend-select = ["E", "F", "W"]
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
