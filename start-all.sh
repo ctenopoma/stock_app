@@ -15,7 +15,9 @@ ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 BACKEND_DIR="$ROOT_DIR/backend"
 FRONTEND_DIR="$ROOT_DIR/frontend"
 LOG_DIR="$ROOT_DIR/logs"
-PID_FILE="$ROOT_DIR/.pids"
+PID_DIR="$ROOT_DIR/.pids"
+PID_FILE="$PID_DIR/services.pid"
+PID_FILE="$PID_DIR/services.pid"
 
 HOST="${HOST:-127.0.0.1}"
 BACKEND_PORT="${BACKEND_PORT:-8000}"
@@ -59,7 +61,7 @@ parse_args() {
 
 parse_args "$@"
 
-mkdir -p "$LOG_DIR"
+mkdir -p "$LOG_DIR" "$PID_DIR"
 
 echo "[stock_app] Starting services (backend:$BACKEND_PORT frontend:$FRONTEND_PORT host:$HOST)"
 
