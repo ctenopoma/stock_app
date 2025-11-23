@@ -38,6 +38,18 @@ docker compose down -v
 - **フロントエンド (Next.js)**: http://localhost:3001
 - **Django Admin**: http://localhost:8000/admin
 
+## 初期ログイン情報
+
+### 管理者アカウント
+- **ユーザー名**: `admin`
+- **パスワード**: `admin123`
+
+### テストユーザー
+- **ユーザー名**: `naoki`
+- **パスワード**: `password123`
+
+**注意**: 本番環境では必ずパスワードを変更してください。
+
 ## 便利なコマンド
 
 ### ログを確認
